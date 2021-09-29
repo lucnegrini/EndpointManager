@@ -1,5 +1,6 @@
 ﻿using EndpointManager.Enums;
 using EndpointManager.Models;
+using EndpointManager.Repositories;
 using EndpointManager.Services;
 using EndpointManager.Tests.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -9,20 +10,20 @@ using System;
 namespace EndpointManager.Tests
 {
     [TestClass]
-    public class CompanyServiceTests
+    public class companyServiceTests
     {
-        private static CompanyService CompanyService;
+        private static CompanyService companyService;
 
         [TestMethod]
         public void TestInsertValidEndpoint()
         {
-            var Company = new Mock<Company>();
-            Company.Setup(a => a.InsertEndpoint(It.IsAny<Endpoint>()));
-            Company.Setup(a => a.HasEndpointWithSerialNumber(It.IsAny<string>())).Returns(false);
+            var companyRepository = new Mock<CompanyRepository>();
+            companyRepository.Setup(a => a.InsertEndpoint(It.IsAny<Endpoint>()));
+            companyRepository.Setup(a => a.HasEndpointWithSerialNumber(It.IsAny<string>())).Returns(false);
 
-            CompanyService = new CompanyService(Company.Object);
+            companyService = new CompanyService(companyRepository.Object);
 
-            var result = CompanyService.InsertEndpoint(TestHelper.ValidEndpoint);
+            var result = companyService.InsertEndpoint(TestHelper.ValidEndpoint);
 
             Assert.IsTrue(result == InsertEndpointResponseEnum.Success);
         }
@@ -30,12 +31,12 @@ namespace EndpointManager.Tests
         [TestMethod]
         public void TestInsertExistingSerialNumber()
         {
-            var Company = new Mock<Company>();
-            Company.Setup(a => a.HasEndpointWithSerialNumber(It.IsAny<string>())).Returns(true);
+            var companyRepository = new Mock<CompanyRepository>();
+            companyRepository.Setup(a => a.HasEndpointWithSerialNumber(It.IsAny<string>())).Returns(true);
 
-            CompanyService = new CompanyService(Company.Object);
+            companyService = new CompanyService(companyRepository.Object);
 
-            var result = CompanyService.InsertEndpoint(TestHelper.ValidEndpoint);
+            var result = companyService.InsertEndpoint(TestHelper.ValidEndpoint);
 
             Assert.IsTrue(result == InsertEndpointResponseEnum.SerialNumberAllreadyExists);
         }
@@ -43,13 +44,13 @@ namespace EndpointManager.Tests
         [TestMethod]
         public void TestDeleteExistingEndpoint()
         {
-            var Company = new Mock<Company>();
-            Company.Setup(a => a.DeleteEndpoint(It.IsAny<string>()));
-            Company.Setup(a => a.HasEndpointWithSerialNumber(It.IsAny<string>())).Returns(true);
+            var companyRepository = new Mock<CompanyRepository>();
+            companyRepository.Setup(a => a.DeleteEndpoint(It.IsAny<string>()));
+            companyRepository.Setup(a => a.HasEndpointWithSerialNumber(It.IsAny<string>())).Returns(true);
 
-            CompanyService = new CompanyService(Company.Object);
+            companyService = new CompanyService(companyRepository.Object);
 
-            var result = CompanyService.DeleteEndpoint(TestHelper.ValidEndpoint.SerialNumber);
+            var result = companyService.DeleteEndpoint(TestHelper.ValidEndpoint.SerialNumber);
 
             Assert.IsTrue(result == DeleteEndpointResponseEnum.Success);
         }
@@ -57,13 +58,13 @@ namespace EndpointManager.Tests
         [TestMethod]
         public void TestDeleteUnexistingEndpoint()
         {
-            var Company = new Mock<Company>();
-            Company.Setup(a => a.DeleteEndpoint(It.IsAny<string>()));
-            Company.Setup(a => a.HasEndpointWithSerialNumber(It.IsAny<string>())).Returns(false);
+            var companyRepository = new Mock<CompanyRepository>();
+            companyRepository.Setup(a => a.DeleteEndpoint(It.IsAny<string>()));
+            companyRepository.Setup(a => a.HasEndpointWithSerialNumber(It.IsAny<string>())).Returns(false);
 
-            CompanyService = new CompanyService(Company.Object);
+            companyService = new CompanyService(companyRepository.Object);
 
-            var result = CompanyService.DeleteEndpoint(TestHelper.ValidEndpoint.SerialNumber);
+            var result = companyService.DeleteEndpoint(TestHelper.ValidEndpoint.SerialNumber);
 
             Assert.IsTrue(result == DeleteEndpointResponseEnum.EndpointNotFound);
         }

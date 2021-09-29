@@ -8,21 +8,21 @@ namespace EndpointManager.Services
 {
     public class CompanyService : ICompanyService
     {
-        private readonly Company Company;
+        private readonly ICompanyRepository companyRepository;
 
-        public CompanyService(Company company)
+        public CompanyService(ICompanyRepository companyRepository)
         {
-            this.Company = company;
+            this.companyRepository = companyRepository;
         }
 
         public DeleteEndpointResponseEnum DeleteEndpoint(string serialNumber)
         {
-            if (!this.Company.HasEndpointWithSerialNumber(serialNumber))
+            if (!this.companyRepository.HasEndpointWithSerialNumber(serialNumber))
                 return DeleteEndpointResponseEnum.EndpointNotFound;
 
             try
             {
-                this.Company.DeleteEndpoint(serialNumber);
+                this.companyRepository.DeleteEndpoint(serialNumber);
             }
             catch(Exception)
             {
@@ -34,12 +34,12 @@ namespace EndpointManager.Services
 
         public EditEndpointResponseEnum EditEndpoint(string serialNumber, SwitchStateEnum state)
         {
-            if (!this.Company.HasEndpointWithSerialNumber(serialNumber))
+            if (!this.companyRepository.HasEndpointWithSerialNumber(serialNumber))
                 return EditEndpointResponseEnum.EndpointNotFound;
 
             try
             {
-                this.Company.EditEndpoint(serialNumber, state);
+                this.companyRepository.EditEndpoint(serialNumber, state);
             }
             catch (Exception)
             {
@@ -50,27 +50,27 @@ namespace EndpointManager.Services
 
         public Endpoint FindEndpointBySerialNumber(string serialNumber)
         {
-            return this.Company.FindBySerialNumber(serialNumber);
+            return this.companyRepository.FindBySerialNumber(serialNumber);
         }
 
         public List<Endpoint> GetEndpoints()
         {
-            return this.Company.GetEndpoints();
+            return this.companyRepository.GetEndpoints();
         }
 
         public bool HasEndpointWithSerialNumber(string serialNumber)
         {
-            return this.Company.HasEndpointWithSerialNumber(serialNumber);
+            return this.companyRepository.HasEndpointWithSerialNumber(serialNumber);
         }
 
         public InsertEndpointResponseEnum InsertEndpoint(Endpoint endpoint)
         {
-            if (this.Company.HasEndpointWithSerialNumber(endpoint.SerialNumber))
+            if (this.companyRepository.HasEndpointWithSerialNumber(endpoint.SerialNumber))
                 return InsertEndpointResponseEnum.SerialNumberAllreadyExists;
 
             try
             {
-                this.Company.InsertEndpoint(endpoint);
+                this.companyRepository.InsertEndpoint(endpoint);
             }
             catch (Exception)
             {
